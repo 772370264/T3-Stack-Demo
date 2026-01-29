@@ -1,0 +1,421 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  
+  /* GitHub 颜色主题 */
+  --color-gh-bg: #0d1117;
+  --color-gh-bg-secondary: #161b22;
+  --color-gh-border: #30363d;
+  --color-gh-text: #c9d1d9;
+  --color-gh-text-muted: #8b949e;
+  --color-gh-accent: #58a6ff;
+  --color-gh-accent-emphasis: #1f6feb;
+  --color-gh-success: #238636;
+  --color-gh-success-emphasis: #2ea043;
+  --color-gh-danger: #da3633;
+  --color-gh-danger-emphasis: #f85149;
+  --color-gh-warning: #d29922;
+  --color-gh-white: #ffffff;
+  --color-gh-header: #010409;
+}
+
+/* GitHub 风格的基础样式 */
+body {
+  background-color: var(--color-gh-bg);
+  color: var(--color-gh-text);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 自定义滚动条 - GitHub 风格 */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-gh-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gh-border);
+  border-radius: 6px;
+  border: 3px solid var(--color-gh-bg);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gh-text-muted);
+}
+
+/* 表单输入框 - GitHub 风格 */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+textarea,
+select {
+  background-color: var(--color-gh-bg);
+  border: 1px solid var(--color-gh-border);
+  border-radius: 6px;
+  color: var(--color-gh-text);
+  padding: 5px 12px;
+  font-size: 14px;
+  line-height: 20px;
+  transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="search"]:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--color-gh-accent);
+  box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+}
+
+input[type="text"]::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="search"]::placeholder,
+textarea::placeholder {
+  color: var(--color-gh-text-muted);
+}
+
+/* GitHub 风格按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 5px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease-in-out;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.btn-primary {
+  background-color: var(--color-gh-success);
+  color: var(--color-gh-white);
+  border-color: rgba(240, 246, 252, 0.1);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-gh-success-emphasis);
+}
+
+.btn-secondary {
+  background-color: var(--color-gh-bg-secondary);
+  color: var(--color-gh-text);
+  border-color: var(--color-gh-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #30363d;
+  border-color: #8b949e;
+}
+
+.btn-danger {
+  background-color: var(--color-gh-danger);
+  color: var(--color-gh-white);
+  border-color: rgba(240, 246, 252, 0.1);
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--color-gh-danger-emphasis);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--color-gh-accent);
+  border-color: var(--color-gh-border);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--color-gh-accent);
+  color: var(--color-gh-white);
+}
+
+/* GitHub 风格卡片 */
+.card {
+  background-color: var(--color-gh-bg-secondary);
+  border: 1px solid var(--color-gh-border);
+  border-radius: 6px;
+}
+
+/* GitHub 风格表格 */
+.table-container {
+  overflow-x: auto;
+  border: 1px solid var(--color-gh-border);
+  border-radius: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--color-gh-bg);
+}
+
+table th {
+  background-color: var(--color-gh-bg-secondary);
+  border-bottom: 1px solid var(--color-gh-border);
+  padding: 8px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--color-gh-text);
+}
+
+table td {
+  border-bottom: 1px solid var(--color-gh-border);
+  padding: 8px 16px;
+  font-size: 14px;
+  color: var(--color-gh-text);
+}
+
+table tr:last-child td {
+  border-bottom: none;
+}
+
+table tr:hover td {
+  background-color: var(--color-gh-bg-secondary);
+}
+
+/* GitHub 风格徽章 */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 7px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 18px;
+  border-radius: 2em;
+  border: 1px solid transparent;
+}
+
+.badge-success {
+  background-color: rgba(35, 134, 54, 0.2);
+  color: #3fb950;
+  border-color: rgba(63, 185, 80, 0.4);
+}
+
+.badge-warning {
+  background-color: rgba(210, 153, 34, 0.2);
+  color: #d29922;
+  border-color: rgba(210, 153, 34, 0.4);
+}
+
+.badge-danger {
+  background-color: rgba(218, 54, 51, 0.2);
+  color: #f85149;
+  border-color: rgba(248, 81, 73, 0.4);
+}
+
+.badge-info {
+  background-color: rgba(88, 166, 255, 0.2);
+  color: #58a6ff;
+  border-color: rgba(88, 166, 255, 0.4);
+}
+
+/* GitHub 风格模态框 */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(1, 4, 9, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal {
+  background-color: var(--color-gh-bg-secondary);
+  border: 1px solid var(--color-gh-border);
+  border-radius: 12px;
+  max-width: 500px;
+  width: 90%;
+  max-height: 80vh;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--color-gh-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-body {
+  padding: 16px;
+  overflow-y: auto;
+  max-height: calc(80vh - 120px);
+}
+
+.modal-footer {
+  padding: 16px;
+  border-top: 1px solid var(--color-gh-border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* GitHub 顶部导航 */
+.gh-header {
+  background-color: var(--color-gh-header);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-gh-border);
+}
+
+/* 加载动画 */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-gh-border);
+  border-top-color: var(--color-gh-accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 表单组 */
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-gh-text);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+}
+
+.form-error {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-gh-danger-emphasis);
+}
+
+/* Stats 卡片 */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  background-color: var(--color-gh-bg-secondary);
+  border: 1px solid var(--color-gh-border);
+  border-radius: 6px;
+  padding: 16px;
+}
+
+.stat-card h3 {
+  font-size: 12px;
+  color: var(--color-gh-text-muted);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.stat-card .value {
+  font-size: 32px;
+  font-weight: 600;
+  color: var(--color-gh-text);
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--color-gh-text-muted);
+}
+
+.empty-state svg {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  opacity: 0.5;
+}
+
+/* 提示消息 */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  z-index: 100;
+  animation: slideInRight 0.3s ease-out;
+}
+
+.toast-success {
+  background-color: var(--color-gh-success);
+  color: var(--color-gh-white);
+}
+
+.toast-error {
+  background-color: var(--color-gh-danger);
+  color: var(--color-gh-white);
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
