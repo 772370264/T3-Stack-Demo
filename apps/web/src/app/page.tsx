@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
+import { TeamSwitcher } from "~/app/_components/team-switcher";
+import { Navigation } from "~/app/_components/navigation";
+import { UserNav } from "~/app/_components/user-nav";
 
 export default function Home() {
   const { data: session, status } = useSession();
@@ -17,37 +20,11 @@ export default function Home() {
               <path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"></path>
             </svg>
           </Link>
-          <nav className="flex items-center gap-4 text-sm" style={{ color: "var(--color-gh-text)" }}>
-            <Link href="/" className="px-2 py-1 rounded-md bg-white/10">首页</Link>
-            <Link href="/admin/users" className="px-2 py-1 rounded-md hover:bg-white/10">用户管理</Link>
-          </nav>
+          <Navigation />
         </div>
         <div className="flex items-center gap-3">
-          {isLoading ? (
-            <div className="spinner" style={{ width: "20px", height: "20px" }}></div>
-          ) : session ? (
-            <>
-              <span className="text-sm" style={{ color: "var(--color-gh-text-muted)" }}>
-                {session.user.name ?? session.user.email}
-              </span>
-              <button
-                onClick={() => void signOut()}
-                className="btn btn-secondary"
-                style={{ padding: "4px 12px", fontSize: "12px" }}
-              >
-                退出登录
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/auth/signin" className="btn btn-secondary" style={{ padding: "4px 12px", fontSize: "12px" }}>
-                登录
-              </Link>
-              <Link href="/auth/register" className="btn btn-primary" style={{ padding: "4px 12px", fontSize: "12px" }}>
-                注册
-              </Link>
-            </>
-          )}
+          <UserNav />
+          <TeamSwitcher />
         </div>
       </header>
 
@@ -179,26 +156,35 @@ export default function Home() {
         {/* Status Section */}
         {session && (
           <section className="py-8 px-4">
-            <div className="max-w-4xl mx-auto">
-              <div className="card p-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold"
-                    style={{ backgroundColor: "var(--color-gh-success)", color: "var(--color-gh-white)" }}>
-                    {session.user.name?.charAt(0)?.toUpperCase() ?? "U"}
-                  </div>
-                  <div>
-                    <h3 className="font-semibold" style={{ color: "var(--color-gh-text)" }}>
-                      欢迎回来，{session.user.name ?? "用户"}！
-                    </h3>
-                    <p className="text-sm" style={{ color: "var(--color-gh-text-muted)" }}>
-                      {session.user.email}
-                    </p>
-                  </div>
-                  <div className="ml-auto">
-                    <span className="badge badge-success">已登录</span>
+            <div className="max-w-4xl mx-auto flex flex-col items-center justify-center gap-4">
+              <p className="text-center text-lg text-white">
+                <span>Logged in as {session?.user?.name}</span>
+              </p>
+              <div className="flex gap-4">
+                <Link
+                  href="/admin/users"
+                  className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                >
+                  User Management
+                </Link>
+                <Link
+                  href="/api/auth/signout"
+                  className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
+                >
+                  Sign out
+                </Link>
+              </div>
+
+              {session?.user && (
+                <div className="mt-8 flex flex-col items-center gap-2">
+                  <p className="text-2xl text-white">
+                    User Details:
+                  </p>
+                  <div className="rounded-lg bg-white/10 p-4 text-white">
+                    <pre>{JSON.stringify(session.user, null, 2)}</pre>
                   </div>
                 </div>
-              </div>
+              )}
             </div>
           </section>
         )}

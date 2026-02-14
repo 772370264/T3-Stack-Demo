@@ -4,201 +4,156 @@
 
 ## 🚀 技术栈
 
-- **[Next.js 15](https://nextjs.org/)** - React 全栈框架，支持 App Router 和服务端渲染
-- **[TypeScript](https://www.typescriptlang.org/)** - 类型安全的 JavaScript
-- **[tRPC](https://trpc.io/)** - 端到端类型安全的 API
-- **[Prisma](https://www.prisma.io/)** - 现代化 ORM，支持 MySQL
-- **[NextAuth.js](https://next-auth.js.org/)** - 完整的认证解决方案
-- **[Tailwind CSS](https://tailwindcss.com/)** - 实用优先的 CSS 框架
+| 层级 | 技术 | 说明 |
+|-----|------|------|
+| **前端** | Next.js 15 + React | App Router + CSR 模式 |
+| **样式** | Tailwind CSS | GitHub 风格深色主题 |
+| **认证** | NextAuth.js | 邮箱密码登录 |
+| **后端通信** | tRPC | 端到端类型安全 |
+| **数据库** | Prisma + SQLite | 支持多系统角色和团队 |
 
-## ✨ 功能特性
+---
+
+## 🏗️ 系统架构
+
+```
+┌──────────────────┐     tRPC      ┌───────────────────┐
+│                  │ ────────────► │                   │
+│   web (前端)      │               │  admin-service    │
+│   :3000          │ ◄──────────── │  :4001 (tRPC)     │
+│                  │               │                   │
+└────────┬─────────┘               └─────────┬─────────┘
+         │                                   │
+         │                                   │
+         ▼                                   ▼
+    ┌─────────────────────────────────────────────┐
+    │              @repo/database                 │
+    │            (Prisma + SQLite)                │
+    └─────────────────────────────────────────────┘
+```
+
+### 服务分工
+
+| 服务 | 端口 | 协议 | 职责 |
+|-----|------|------|------|
+| **web** | 3000 | Next.js | 前端 UI + 认证 |
+| **admin-service** | 4001 | tRPC | 用户管理 + 团队管理 |
+| ~~runtime-service~~ | 4002 | RESTful + axios | 运行时业务（待实现） |
+
+---
+
+## ✨ 功能模块
 
 ### 用户认证
-- ✅ 邮箱/密码登录
-- ✅ 用户注册
-- ✅ JWT 会话管理
-- ✅ 自定义登录/注册页面
+- ✅ 邮箱/密码登录 (`/auth/signin`)
+- ✅ 用户注册 (`/auth/register`)
+- ✅ 忘记密码 (`/auth/forgot-password`)
 
-### 用户管理 (CRUD)
-- ✅ 用户列表展示
-- ✅ 创建新用户
-- ✅ 编辑用户信息
-- ✅ 删除用户
-- ✅ 用户状态管理 (active/inactive/suspended)
-- ✅ 角色管理 (admin/user)
-- ✅ 用户统计仪表盘
+### 用户管理 (`/admin/users`)
+- ✅ 用户列表 + 搜索
+- ✅ 多系统角色（SUPER_ADMIN / ADMIN / USER）
 
-### UI/UX
-- ✅ GitHub 风格深色主题
-- ✅ 响应式设计
-- ✅ 模态框交互
-- ✅ Loading 状态
-- ✅ Toast 消息提示
-- ✅ 表单验证
+### 团队管理 (`/admin/teams`)
+- ✅ 团队 CRUD
+- ✅ 子团队层级
+- ✅ 成员管理（添加 / 修改角色 / 移除）
+- ✅ 团队角色（TEAM_ADMIN / DEVELOPER / OPERATOR）
 
-## 📦 快速开始
+---
 
-### 前置要求
+## 📦 项目结构
 
-- Node.js 18+ 
-- MySQL 数据库
-- npm 或 yarn
+```
+t3_stack_demo/                          # Monorepo 根目录
+├── apps/
+│   ├── web/                            # Next.js 前端
+│   │   ├── src/
+│   │   │   ├── app/                    # App Router 页面
+│   │   │   │   ├── admin/users/        # 用户管理
+│   │   │   │   ├── admin/teams/        # 团队管理
+│   │   │   │   └── auth/               # 认证页面
+│   │   │   ├── lib/trpc.ts             # tRPC Client
+│   │   │   └── server/auth/            # NextAuth 配置
+│   │   └── .env                        # 环境变量
+│   │
+│   ├── admin-service/                  # tRPC 后端服务
+│   │   └── src/
+│   │       ├── trpc.ts                 # tRPC 初始化
+│   │       ├── index.ts                # Express + tRPC 适配器
+│   │       └── routers/
+│   │           ├── _app.ts             # 根路由
+│   │           ├── user.ts             # 用户 tRPC 路由
+│   │           └── team.ts             # 团队 tRPC 路由
+│   │
+│   └── runtime-service/                # RESTful 服务（待实现）
+│
+└── packages/
+    ├── database/                       # Prisma Schema + Client
+    │   └── prisma/schema.prisma
+    └── types/                          # 共享类型定义
+```
 
-### 安装步骤
+---
 
-1. **克隆项目后安装依赖**
+## 🛠️ 快速开始
 
 ```bash
-npm install
+# 1. 安装依赖
+pnpm install
+
+# 2. 初始化数据库
+pnpm --filter database db:push
+
+# 3. 启动开发服务器
+pnpm run dev
 ```
 
-2. **配置环境变量**
+**访问地址：**
+- 前端: http://localhost:3000
+- admin-service: http://localhost:4001/trpc
 
-编辑 `.env` 文件，修改数据库连接信息：
+---
 
-```env
-# 数据库连接 URL
-DATABASE_URL="mysql://用户名:密码@主机:端口/数据库名"
-
-# NextAuth 密钥（已预设，可自行生成新的）
-AUTH_SECRET="your-auth-secret"
-```
-
-3. **初始化数据库**
-
-```bash
-# 推送数据库 Schema
-npm run db:push
-
-# 生成 Prisma Client
-npx prisma generate
-
-# (可选) 导入种子数据
-npm run db:seed
-```
-
-4. **启动开发服务器**
-
-```bash
-npm run dev
-```
-
-访问 http://localhost:3000 查看应用。
-
-## 📋 测试账户
-
-运行 `npm run db:seed` 后，可使用以下测试账户：
-
-| 角色 | 邮箱 | 密码 |
-|------|------|------|
-| 管理员 | admin@example.com | admin123 |
-| 普通用户 | user@example.com | user123 |
-| 演示用户 | zhang@example.com | demo123 |
-| 演示用户 | li@example.com | demo123 |
-| 演示用户 | wang@example.com | demo123 |
-
-## 🗂️ 项目结构
-
-```
-t3_stack_demo/
-├── prisma/
-│   ├── schema.prisma      # Prisma 数据库模型
-│   └── seed.ts            # 数据库种子脚本
-├── src/
-│   ├── app/
-│   │   ├── _components/   # 共享组件
-│   │   ├── admin/users/   # 用户管理页面
-│   │   ├── auth/          # 认证页面 (登录/注册)
-│   │   ├── api/           # API 路由
-│   │   ├── layout.tsx     # 根布局
-│   │   └── page.tsx       # 首页
-│   ├── server/
-│   │   ├── api/
-│   │   │   ├── routers/
-│   │   │   │   ├── post.ts    # Post Router (示例)
-│   │   │   │   └── user.ts    # 用户管理 Router
-│   │   │   ├── root.ts        # tRPC 根路由
-│   │   │   └── trpc.ts        # tRPC 配置
-│   │   ├── auth/              # NextAuth 配置
-│   │   └── db.ts              # Prisma Client
-│   ├── styles/
-│   │   └── globals.css        # 全局样式 (GitHub 主题)
-│   ├── trpc/                  # tRPC 客户端配置
-│   └── env.js                 # 环境变量验证
-├── .env                       # 环境变量
-├── package.json
-└── README.md
-```
-
-## 🛠️ 可用脚本
-
-| 脚本 | 说明 |
-|------|------|
-| `npm run dev` | 启动开发服务器 (Turbopack) |
-| `npm run build` | 构建生产版本 |
-| `npm run start` | 启动生产服务器 |
-| `npm run typecheck` | TypeScript 类型检查 |
-| `npm run db:push` | 推送 Prisma Schema 到数据库 |
-| `npm run db:generate` | 生成数据库迁移 |
-| `npm run db:seed` | 运行数据库种子脚本 |
-| `npm run db:studio` | 打开 Prisma Studio |
-
-## 🔧 数据库配置
-
-### 使用 MySQL
-
-1. 确保 MySQL 服务正在运行
-2. 创建数据库：
-
-```sql
-CREATE DATABASE t3_stack_demo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-3. 更新 `.env` 中的 `DATABASE_URL`
-
-### 数据库模型
+## 📊 数据模型
 
 ```prisma
 model User {
-    id            String    @id @default(cuid())
-    name          String?
-    email         String?   @unique
-    password      String?
-    role          String    @default("user")    // admin, user
-    status        String    @default("active")  // active, inactive, suspended
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
-    // ... NextAuth 相关字段
+    id          String   @id @default(cuid())
+    name        String?
+    email       String?  @unique
+    password    String?
+    status      String   @default("active")
+    systemRoles UserSystemRole[]   # 多系统角色
+    teamMembers TeamMember[]       # 团队成员关系
+}
+
+model UserSystemRole {
+    id     String @id @default(cuid())
+    userId String
+    role   String  # SUPER_ADMIN / ADMIN / USER
+    user   User   @relation(...)
+}
+
+model Team {
+    id          String  @id @default(cuid())
+    name        String
+    description String?
+    parentId    String?
+    parent      Team?   @relation("TeamHierarchy", ...)
+    children    Team[]  @relation("TeamHierarchy")
+    members     TeamMember[]
+}
+
+model TeamMember {
+    id     String @id @default(cuid())
+    userId String
+    teamId String
+    role   String  # TEAM_ADMIN / DEVELOPER / OPERATOR
 }
 ```
 
-## 📱 页面路由
-
-| 路由 | 说明 | 权限 |
-|------|------|------|
-| `/` | 首页 | 公开 |
-| `/auth/signin` | 登录页面 | 公开 |
-| `/auth/register` | 注册页面 | 公开 |
-| `/admin/users` | 用户管理 | 需要登录 |
-
-## 🎨 主题定制
-
-项目使用了 GitHub 风格的深色主题。主要颜色定义在 `src/styles/globals.css`:
-
-```css
---color-gh-bg: #0d1117;           /* 主背景 */
---color-gh-bg-secondary: #161b22; /* 次要背景 */
---color-gh-border: #30363d;       /* 边框 */
---color-gh-text: #c9d1d9;         /* 主文字 */
---color-gh-accent: #58a6ff;       /* 强调色 */
---color-gh-success: #238636;      /* 成功色 */
---color-gh-danger: #da3633;       /* 危险色 */
-```
+---
 
 ## 📄 License
 
 MIT License
-
----
-
-由 [create-t3-app](https://create.t3.gg/) 创建
