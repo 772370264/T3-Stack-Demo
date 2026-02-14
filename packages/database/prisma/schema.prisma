@@ -149,17 +149,19 @@ model SystemRoleMenu {
 // 团队角色表
 model TeamRole {
     id        String       @id @default(cuid())
-    name      String
     teamId    String
+    name      String
+    code      String       // 角色编码（如 "dev", "ops"）
     isAdmin   Boolean      @default(false)
+    members   TeamMember[]
+    menus     TeamRoleMenu[]
     createdAt DateTime     @default(now())
     updatedAt DateTime     @updatedAt
-
+    
     team    Team           @relation(fields: [teamId], references: [id], onDelete: Cascade)
-    menus   TeamRoleMenu[]
-    members TeamMember[]
 
     @@unique([teamId, name])
+    @@unique([teamId, code]) // 同团队内编码唯一
     @@index([teamId])
 }
 

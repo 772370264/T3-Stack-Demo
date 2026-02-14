@@ -37,6 +37,7 @@ async function main() {
         { name: "用户管理", path: "/admin/users", icon: "users", sortOrder: 1, parentId: systemMenu.id },
         { name: "团队管理", path: "/admin/teams", icon: "building", sortOrder: 2, parentId: systemMenu.id },
         { name: "菜单管理", path: "/admin/menus", icon: "menu", sortOrder: 3, parentId: systemMenu.id },
+        { name: "角色管理", path: "/admin/roles", icon: "shield-check", sortOrder: 4, parentId: systemMenu.id },
     ];
 
     for (const menu of subMenus) {
@@ -65,7 +66,20 @@ async function main() {
         create: {
             teamId: adminTeam.id,
             name: "管理员",
+            code: "admin",
             isAdmin: true,
+        },
+    });
+
+    // 5b. 创建开发者团队角色
+    await db.teamRole.upsert({
+        where: { teamId_name: { teamId: adminTeam.id, name: "开发者" } },
+        update: {},
+        create: {
+            teamId: adminTeam.id,
+            name: "开发者",
+            code: "developer",
+            isAdmin: false,
         },
     });
 

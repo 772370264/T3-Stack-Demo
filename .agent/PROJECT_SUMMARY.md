@@ -122,7 +122,8 @@
 
 ```
 用户可见菜单 = ADMIN ? 全部菜单
-            : SystemRoleMenu(USER) ∪ TeamRoleMenu(当前团队角色)
+            : 有团队角色菜单 ? TeamRoleMenu(当前团队角色)
+            : SystemRoleMenu(USER)  // 保底
 ```
 
 ### 登录流程
@@ -158,10 +159,11 @@ Seed 会创建一个固定的 **"系统管理"** 团队（id: `admin-team`），
 
 ### 层级菜单系统
 
-Seed 会创建 **"系统管理"** 父菜单（path: `/admin`），下挂三个子菜单：
+Seed 会创建 **"系统管理"** 父菜单（path: `/admin`），下挂四个子菜单：
 - 用户管理 (`/admin/users`)
 - 团队管理 (`/admin/teams`)
 - 菜单管理 (`/admin/menus`)
+- 角色管理 (`/admin/roles`)
 
 菜单 API 支持 3 级递归查询，子菜单可见时自动包含父菜单。
 
@@ -196,6 +198,7 @@ Seed 会创建 **"系统管理"** 父菜单（path: `/admin`），下挂三个�
 | `/admin/teams/:id` | 团队详情 |
 | `/admin/teams/:id/roles` | 团队角色管理 + 菜单权限配置 |
 | `/admin/menus` | 系统菜单权限配置（ADMIN 配置 USER 可见菜单） |
+| `/admin/roles` | 角色管理（系统+团队角色 CRUD + 菜单权限配置） |
 
 **API 路由**：
 
@@ -236,9 +239,10 @@ Seed 会创建 **"系统管理"** 父菜单（path: `/admin`），下挂三个�
 | `team.removeMember` | mutation | 移除成员（需 operatorId，校验管理员） |
 | `team.getUserTeams` | query | 获取用户所属团队列表 |
 | **role** | | |
+| `role.getAll` | query | 获取所有角色（系统+团队，含类型、所属团队、成员数） |
 | `role.getByTeam` | query | 获取团队角色列表 |
-| `role.create` | mutation | 创建团队角色 |
-| `role.update` | mutation | 更新团队角色 |
+| `role.create` | mutation | 创建团队角色（含 code，自动复制 USER 菜单权限） |
+| `role.update` | mutation | 更新团队角色（含 code） |
 | `role.delete` | mutation | 删除团队角色（需无成员） |
 | `role.getMenus` | query | 获取角色关联的菜单 ID |
 | `role.updateMenus` | mutation | 更新角色菜单权限 |
@@ -294,10 +298,12 @@ model TeamRole {
     id      String  @id @default(cuid())
     teamId  String
     name    String
+    code    String          // 角色编码
     isAdmin Boolean @default(false)
     members TeamMember[]
     menus   TeamRoleMenu[]
     @@unique([teamId, name])
+    @@unique([teamId, code])  // 同团队内编码唯一
 }
 
 model Menu {

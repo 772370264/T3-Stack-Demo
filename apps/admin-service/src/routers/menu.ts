@@ -53,15 +53,16 @@ export const menuRouter = router({
                 });
             }
 
-            // 2. 获取 USER 角色可见的菜单
-            const userRoleMenus = await db.systemRoleMenu.findMany({
+            // 2. 获取保底菜单（USER 系统角色菜单）
+            const fallbackMenus = await db.systemRoleMenu.findMany({
                 where: { role: "USER" },
                 select: { menuId: true },
             });
-            const visibleMenuIds = new Set(userRoleMenus.map((r) => r.menuId));
 
-            // 3. 如果指定了 teamId，获取团队角色的菜单
+            let visibleMenuIds: Set<string>;
+
             if (input.teamId) {
+                // 有团队 → 仅使用团队角色菜单
                 const member = await db.teamMember.findUnique({
                     where: {
                         userId_teamId: { userId: input.userId, teamId: input.teamId },
@@ -75,9 +76,20 @@ export const menuRouter = router({
                     },
                 });
 
+                const teamMenuIds = new Set<string>();
                 if (member?.teamRole?.menus) {
-                    member.teamRole.menus.forEach((m) => visibleMenuIds.add(m.menuId));
+                    member.teamRole.menus.forEach((m) => teamMenuIds.add(m.menuId));
                 }
+
+                // 如果团队角色没有配置任何菜单，回退到保底菜单
+                if (teamMenuIds.size > 0) {
+                    visibleMenuIds = teamMenuIds;
+                } else {
+                    visibleMenuIds = new Set(fallbackMenus.map((r) => r.menuId));
+                }
+            } else {
+                // 无团队 → 使用 USER 角色保底菜单
+                visibleMenuIds = new Set(fallbackMenus.map((r) => r.menuId));
             }
 
             // 4. 向上查找所有父级菜单，确保路径可见
